@@ -92,7 +92,10 @@ gulp.task( 'script-concat', function () {
 
 gulp.task( 'script-min', function (){
 
-  return gulp.src( [dir.libs + '/**/*.js',dir.libs + '/**/!(*.min.js)'] )
+  return gulp.src( [
+    dir.libs + '/**/*.js',
+    '!' + dir.libs + '/**/*.min.js'
+  ] )
     .pipe( uglify( { preserveComments: 'some' } ) )
     .pipe( rename( { suffix: '.min' } ) )
     .pipe( replace( { patterns: patterns } ) )
