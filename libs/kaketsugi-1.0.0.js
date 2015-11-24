@@ -1,9 +1,7 @@
-/**
- * @license inazumatv.com
+/*!
+ * Copyright (c) 2011-@@year inazumatv.com, inc.
  * @author (at)taikiken / http://inazumatv.com
  * @date 2015/03/16 - 14:02
- *
- * Copyright (c) 2011-@@year inazumatv.com, inc.
  *
  * Distributed under the terms of the MIT license.
  * http://www.opensource.org/licenses/mit-license.html
@@ -12,18 +10,21 @@
  *
  * Polyfill
  *
- * @build: @@buildTime
- * @version: @@version
+ * build: @@buildTime
+ * version: @@version
+ * url @@url
+ *
  */
 /*jshint bitwise: false*/
 ( function ( window ){
-  "use strict";
+  'use strict';
   var
-    document = window.document,
+    //document = window.document,
     _max = Math.max,
     _abs = Math.abs,
     self = window.self;
 
+  // Chrome < 5, Firefox < 3, IE < 9, Safari < 4
   // Date.now
   // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Date/now
   if ( !Date.now ) {
@@ -36,6 +37,7 @@
 
   }
 
+  // Chrome < 24, Firefox < 23, IE < 10, Safari < 6
   // requestAnimationFrame
   // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
   // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
@@ -73,6 +75,7 @@
 
   }() );
 
+  // Chrome < 5, Firefox < 5, IE < 9, Safari < 5
   // Object.create
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
   if ( typeof Object.create !== 'function' ) {
@@ -131,6 +134,7 @@
 
   }
 
+  // Firefox < 4, Chrome < 5, IE < 9, Safari < 5
   // Array.isArray
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray
   if ( !Array.isArray ) {
@@ -143,6 +147,7 @@
 
   }
 
+  // IE < 9
   // Array.indexOf
   // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
   // Production steps of ECMA-262, Edition 5, 15.4.4.14
@@ -155,7 +160,7 @@
 
       // 1. Let O be the result of calling ToObject passing
       //    the this value as the argument.
-      if ( this === null || typeof this === "undefined" ) {
+      if ( this === null || typeof this === 'undefined' ) {
 
         throw new TypeError( '"this" is null or not defined' );
 
@@ -226,6 +231,7 @@
     };
   }
 
+  // IE < 9
   // Array.forEach
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
   // Production steps of ECMA-262, Edition 5, 15.4.4.18
@@ -237,7 +243,7 @@
       var T, k;
 
       //if (this == null) {
-      if ( this === null || typeof this === "undefined" ) {
+      if ( this === null || typeof this === 'undefined' ) {
 
         throw new TypeError(' this is null or not defined');
 
@@ -252,7 +258,7 @@
 
       // 4. If IsCallable(callback) is false, throw a TypeError exception.
       // See: http://es5.github.com/#x9.11
-      if ( typeof callback !== "function" ) {
+      if ( typeof callback !== 'function' ) {
 
         throw new TypeError(callback + ' is not a function');
 
@@ -296,16 +302,62 @@
     };
   }
 
+  // For iOS 3.x, IE < 9, Firefox < 3.0, Safari < 4.0
+  // https://github.com/madrobby/zepto/blob/master/src/ios3.js
+  // from https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/reduce
+  if ( Array.prototype.reduce === 'undefined' ) {
+
+    Array.prototype.reduce = function ( fun ) {
+
+      if ( this === void 0 || this === null ) { throw new TypeError(); }
+
+      var t = Object( this ), len = t.length >>> 0, k = 0, accumulator;
+
+      if ( typeof fun !== 'function' ) { throw new TypeError(); }
+
+      if ( len === 0 && arguments.length === 1 ) { throw new TypeError(); }
+
+      if ( arguments.length >= 2 ) {
+
+        accumulator = arguments[ 1 ];
+
+      } else {
+        do {
+          if ( k in t ) {
+            accumulator = t[ k++ ];
+            break;
+          }
+
+          if ( ++k >= len ) {
+            throw new TypeError();
+          }
+        } while ( true );
+      }
+
+      while ( k < len ) {
+
+        if ( k in t ) { accumulator = fun.call( undefined, accumulator, t[ k ], k, t ); }
+        k++;
+
+      }
+
+      return accumulator;
+
+    };
+
+  }
+
+  // Chrome < 7, Firefox < 4, IE < 9, Safari < 5.1.4
   // Function.prototype.bind
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
   if ( !Function.prototype.bind ) {
 
     Function.prototype.bind = function ( oThis ) {
 
-      if ( typeof this !== "function" ) {
+      if ( typeof this !== 'function' ) {
 
         // closest thing possible to the ECMAScript 5 internal IsCallable function
-        throw new TypeError( "Function.prototype.bind - what is trying to be bound is not callable" );
+        throw new TypeError( 'Function.prototype.bind - what is trying to be bound is not callable' );
 
       }
 
@@ -331,6 +383,7 @@
     };
   }
 
+  // IE < 9, Safari < 5
   // String.prototype.trim
   // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/String/trim
   if ( !String.prototype.trim ) {

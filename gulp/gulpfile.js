@@ -10,43 +10,26 @@
  *
  * This notice shall be included in all copies or substantial portions of the Software.
  */
+/*jslint node: true */
 // ----------------------------------------------------------------
-"use strict";
+'use strict';
 
 // node Module
-var require = require;
 
 // Gulp Module
 var gulp = require( 'gulp' );
 
-var runSequence = require('run-sequence');
 var size = require('gulp-size');
-
 var concat = require( 'gulp-concat' );
 var rename = require( 'gulp-rename' );
-var uglifyjs = require( 'gulp-uglifyjs' );
 var uglify = require( 'gulp-uglify' );
-
-var shell = require( 'gulp-shell' );
-
 var plumber = require( 'gulp-plumber' );
-
-var sass = require( 'gulp-ruby-sass' );
-var minifycss = require('gulp-minify-css');
-var changed = require('gulp-changed');
-
-var cache = require('gulp-cache');
-
-var rimraf = require('rimraf');
-var del = require('del');
-
-var path = require( 'path' );
-
-var cached = require( 'gulp-cached' );
-
-var yuidoc = require( 'gulp-yuidoc' );
-
+var jshint = require( 'gulp-jshint' );
 var replace = require('gulp-replace-task');
+
+var del = require('del');
+var path = require( 'path' );
+var runSequence = require('run-sequence');
 
 // ----------------------------------------------------------------
 // Directory
@@ -54,14 +37,14 @@ var dir = require( './setting.json' );
 
 // ----------------------------------------------------------------
 // package
-var pac = require( './package.json' );
+var pkg = require( './package.json' );
 
 // ----------------------------------------------------------------
 // patterns, replace task
 var patterns = [
   {
     match: 'version',
-    replacement: pac.version
+    replacement: pkg.version
   },
   {
     match: 'buildTime',
@@ -70,19 +53,31 @@ var patterns = [
   {
     match: 'year',
     replacement: new Date().getFullYear()
+  },
+  {
+    match: 'url',
+    replacement: pkg.repository.url
   }
 ];
 
 // ----------------------------------------------------------------
 //  task
 // ----------------------------------------------------------------
+gulp.task( 'script-hint', function () {
+
+  return gulp.src( dir.src + '/**/*.js' )
+    .pipe( jshint() )
+    .pipe( jshint.reporter('jshint-stylish'));
+
+} );
+
 gulp.task( 'script-concat', function () {
 
   return gulp.src( dir.src + '/**/*.js' )
     .pipe( gulp.dest( dir.libs ) )
     .pipe( rename( function ( path ) {
 
-      path.basename = path.basename + '-' + pac.version;
+      path.basename = path.basename + '-' + pkg.version;
 
     } ) )
     .pipe( gulp.dest( dir.libs ) )
